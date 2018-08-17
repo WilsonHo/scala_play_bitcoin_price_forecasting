@@ -1,3 +1,4 @@
+
 //TODO: Refactor this file
 lazy val commonSettings = Seq(
   organization := "bao.ho",
@@ -8,7 +9,14 @@ lazy val util = (project in file("util"))
   .settings(
     commonSettings,
     name := "util",
-    version := "0.1"
+    version := "0.1",
+    libraryDependencies ++= Seq(
+      dependencies.scalatest,
+      dependencies.scalactic,
+      dependencies.scalaLogging,
+      dependencies.scalaLoggingSlf4j,
+      dependencies.scalaLoggingApi
+    )
   )
 
 lazy val model = (project in file("model"))
@@ -39,15 +47,18 @@ lazy val api = (project in file("api"))
       dependencies.playJson,
       dependencies.playSlick,
       dependencies.playSlickEvolutions,
+      dependencies.akkaActor,
+      dependencies.akkaStream,
       "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
       "com.typesafe.play" %% "play-cache" % "2.6.17",
       "com.github.karelcemus" %% "play-redis" % "2.1.1",
-      "io.swagger" %% "swagger-play2" % "1.6.1-SNAPSHOT"
+      "io.swagger" %% "swagger-play2" % "1.6.0"
     )
   )
   .aggregate(model)
   .dependsOn(model)
   .enablePlugins(PlayScala)
+
 
 lazy val spark = (project in file("spark"))
   .settings(
@@ -56,12 +67,14 @@ lazy val spark = (project in file("spark"))
     version := "0.1",
     libraryDependencies ++= Seq(
       dependencies.postgres,
-      dependencies.playJson
+      dependencies.playJson,
+      dependencies.scalatest
     )
   )
   .aggregate(model)
   .dependsOn(model)
 
+//resolvers += "Artima Maven Repository" at "http://repo.artima.com/releases"
 
 lazy val scheduler = (project in file("scheduler"))
   .settings(
@@ -76,12 +89,14 @@ lazy val scheduler = (project in file("scheduler"))
       dependencies.playWsStandaloneJson,
       dependencies.playWsStandaloneXml,
       dependencies.postgres,
-      dependencies.playJson
-
+      dependencies.playJson,
+      dependencies.scalatest,
+      dependencies.akkaActor,
+      dependencies.akkaStream
     )
   )
-  .aggregate(model)
-  .dependsOn(model)
+  .aggregate(model, util)
+  .dependsOn(model, util)
 
 
 lazy val root = (project in file("."))
@@ -100,11 +115,17 @@ lazy val dependencyVersion =
     val playJsonV = "2.6.9"
     val guiceV = "4.2.0"
     val playSlickV = "3.0.1"
-
+    val scalatestV = "3.0.4"
+    val akkaV = "2.5.14"
+    val scalaLoggingV = "3.9.0"
+    val scalaLoggingSlf4jV = "2.1.2"
+    val scalaLoggingApiV = "2.1.2"
   }
 
 lazy val dependencies =
   new {
+    val scalatest = "org.scalatest" %% "scalatest" % dependencyVersion.scalatestV % "test"
+    val scalactic = "org.scalactic" %% "scalactic" % dependencyVersion.scalatestV
     val postgres = "org.postgresql" % "postgresql" % dependencyVersion.postgresV
     val playAhcWsStandalone = "com.typesafe.play" %% "play-ahc-ws-standalone" % dependencyVersion.playWsStandaloneV
     val playWsStandalone = "com.typesafe.play" %% "play-ws-standalone" % dependencyVersion.playWsStandaloneV
@@ -114,17 +135,13 @@ lazy val dependencies =
     val guice = "com.google.inject" % "guice" % dependencyVersion.guiceV
     val playSlick = "com.typesafe.play" %% "play-slick" % dependencyVersion.playSlickV
     val playSlickEvolutions = "com.typesafe.play" %% "play-slick-evolutions" % dependencyVersion.playSlickV
+    val akkaActor = "com.typesafe.akka" %% "akka-actor" % dependencyVersion.akkaV
+    val akkaStream = "com.typesafe.akka" %% "akka-stream" % dependencyVersion.akkaV
+    val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % dependencyVersion.scalaLoggingV
+    val scalaLoggingSlf4j = "com.typesafe.scala-logging" % "scala-logging-slf4j_2.11" % dependencyVersion.scalaLoggingSlf4jV
+    val scalaLoggingApi = "com.typesafe.scala-logging" % "scala-logging-api_2.11" % dependencyVersion.scalaLoggingApiV
 
-
-    //    val typesafeConfigV = "1.3.1"
-    //    val pureconfigV     = "0.8.0"
-    //    val monocleV        = "1.4.0"
-    //    val akkaV           = "2.5.6"
-    //    val scalatestV      = "3.0.4"
-    //    val scalacheckV     = "1.13.5"
-    //
     //    val typesafeConfig = "com.typesafe"               % "config"                   % typesafeConfigV
-    //    val akka           = "com.typesafe.akka"          %% "akka-stream"             % akkaV
     //    val monocleCore    = "com.github.julien-truffaut" %% "monocle-core"            % monocleV
     //    val monocleMacro   = "com.github.julien-truffaut" %% "monocle-macro"           % monocleV
     //    val pureconfig     = "com.github.pureconfig"      %% "pureconfig"              % pureconfigV

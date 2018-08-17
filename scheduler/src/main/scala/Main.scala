@@ -3,10 +3,11 @@
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import javax.inject.Inject
+import models.CurrencyInfo
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws._
 import play.api.libs.ws.ahc._
-import play.libs.ws.WS
+
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -25,15 +26,37 @@ object Main {
   import scala.concurrent.ExecutionContext.Implicits._
 
   def main(args: Array[String]): Unit = {
-    val jString =
-      """{"market_cap_by_available_supply":[[1484588368000,13367198196],[1484588667000,13364395700]],"price_btc":[[1484588368000,1],[1484588667000,1]],"price_usd":[[1484588368000,829.936],[1484588667000,829.762]],"volume_usd":[[1484588368000,76480000],[1484588667000,76481100]]}"""
-    val json: JsValue = Json.parse(jString)
-    val all = json("market_cap_by_available_supply").as[Seq[Seq[Double]]] ++
-      json("price_btc").as[Seq[Seq[Double]]] //++
-     println (json("price_usd").as[Seq[Seq[Double]]]) //++
-//      json("volume_usd").as[Seq[Seq[Long]]]
+    val speech = """Four score and
+                   |seven years ago
+                   |our fathers"""
+    println(speech)
 
-    println(all)
+
+
+
+
+
+    //    val all =
+    //      ().zipped.toList
+    //    println(all)
+    //    val next = all
+    //          .groupBy(_.head)
+    //      .mapValues(_.map(_.last))
+    //    //      .map {
+    //    //        case (key, value) => CurrencyInfo(key.toLong, NA_ID,)
+    //    //      }
+    //    println(next)
+    //        val aa = for {
+    //          a <- List(1, 2)
+    //          b <- List(4, 5)
+    //        } yield (a, b)
+    //    println(aa)
+    //
+    //    println((List(1, 2), List(4, 5), List(8, 98)).zipped.toList)
+    //    //    println((.zip()).zip())
+    //    //    println(List(1, 2).zipAll(List(4, 5)))
+    //
+    //    println(aa)
     //    val config = Configuration(ConfigFactory.load("./conf/application.conf"))
     //    print(config)
     //
