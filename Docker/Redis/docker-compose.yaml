@@ -7,7 +7,7 @@ services:
     hostname: redis.bao.ho
     restart: unless-stopped
     environment:
-      REDIS_PASSWORD: 123456
+      REDIS_PASSWORD: `
     volumes:
        - ./data/redis:/data
     ports:
