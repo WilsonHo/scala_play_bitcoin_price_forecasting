@@ -1,4 +1,4 @@
-package services
+package services.crawling
 
 import java.util.Date
 
@@ -8,12 +8,18 @@ import models.CurrencyInfo
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSClient, WSResponse}
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits._
+import scala.concurrent.Future
 
-class CoinMarketCap @Inject()(wsClient: WSClient) extends CrawlingCurrencyDataService {
+class CoinMarketCapCrawler @Inject()(wsClient: WSClient) extends CurrencyCrawlerService {
   override def crawlCurrencyData(currency: String, from: Date, to: Date): Future[Seq[CurrencyInfo]] = {
 
+    /**
+      * create Seq[CurrencyInfo] from response body of coin market cap
+      *
+      * @param wsResponse
+      * @return
+      */
     def parseData(wsResponse: WSResponse): Seq[CurrencyInfo] = {
       type MarketCapData = Seq[Seq[Double]]
       val MARKET_CAP_BY_AVAILABLE_SUPPLY = "market_cap_by_available_supply"
@@ -44,10 +50,12 @@ class CoinMarketCap @Inject()(wsClient: WSClient) extends CrawlingCurrencyDataSe
     }
 
     val url =
-      s""""https://graphs2.coinmarketcap.com/currencies/
-         |$currency/
+      s"""https://graphs2.coinmarketcap.com/currencies/
+         |${currency.toLowerCase}/
          |${DateUtils.convertDateToEpoch(from)}/
-         |${DateUtils.convertDateToEpoch(to)}/""".stripMargin.replaceAll("\n", " ")
-    wsClient.url("http://www.google.com").get().map(parseData)
+         |${DateUtils.convertDateToEpoch(to)}/""".stripMargin.replaceAll("\n", "")
+
+    wsClient.url(url).get().map(parseData)
+      .andThen { case _ => wsClient.close() }
   }
 }
