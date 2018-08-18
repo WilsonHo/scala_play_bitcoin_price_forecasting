@@ -8,5 +8,5 @@ import scala.concurrent.Future
 trait CurrencyInfoDAO {
   def all(): Future[Seq[CurrencyInfo]]
 
-  def insert(currencyInfo: CurrencyInfo): Future[Int]
+  def getPrice(currencyId: Int, from: Long, to: Long): Future[Seq[CurrencyInfo]]
 }

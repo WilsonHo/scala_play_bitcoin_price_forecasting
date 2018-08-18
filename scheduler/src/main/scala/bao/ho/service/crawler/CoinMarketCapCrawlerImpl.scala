@@ -11,7 +11,7 @@ import play.api.libs.ws.{WSClient, WSResponse}
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
-class CoinMarketCapCrawler @Inject()(wsClient: WSClient) extends CurrencyCrawlerService {
+class CoinMarketCapCrawlerImpl @Inject()(wsClient: WSClient) extends CurrencyCrawler {
   override def crawlCurrencyData(currency: String, from: Date, to: Date): Future[Seq[CurrencyInfo]] = {
 
     /**
@@ -28,7 +28,7 @@ class CoinMarketCapCrawler @Inject()(wsClient: WSClient) extends CurrencyCrawler
       val NA_ID = -1
 
       val json: JsValue = Json.parse(wsResponse.body)
-      (json(MARKET_CAP_BY_AVAILABLE_SUPPLY).as[MarketCapData]
+      val data = (json(MARKET_CAP_BY_AVAILABLE_SUPPLY).as[MarketCapData]
         .toStream
         .map(row => row.head -> row.last) ++
         json(PRICE_USD).as[MarketCapData]
@@ -47,6 +47,8 @@ class CoinMarketCapCrawler @Inject()(wsClient: WSClient) extends CurrencyCrawler
             value(1),
             value(2).toLong)
         }.toSeq
+      println(data.length)
+      data
     }
 
     val url =

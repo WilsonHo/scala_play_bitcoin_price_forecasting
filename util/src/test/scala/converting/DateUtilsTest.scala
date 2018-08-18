@@ -3,10 +3,6 @@ package converting
 import java.util.Date
 import java.util.Calendar
 
-//import com.typesafe.scalalogging.Logger
-//import org.slf4j.LoggerFactory
-
-
 class DateUtilsTest extends UnitSpec {
   //  val LOG = Logger(LoggerFactory.getLogger(this.getClass))
 

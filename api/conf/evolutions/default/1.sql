@@ -14,7 +14,7 @@ CREATE TABLE "public"."currency_infos" (
   "timestamp" int8 NOT NULL,
   "currency_id" int4 NOT NULL,
   "market_cap_by_available_supply" int8,
-  "price_usd" money,
+  "price_usd" float4,
   "volume" int8
 );
 ALTER TABLE "public"."currency_infos" ADD CONSTRAINT "currency_infos_pkey" PRIMARY KEY ("timestamp");

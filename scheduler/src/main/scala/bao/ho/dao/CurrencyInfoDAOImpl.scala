@@ -11,11 +11,10 @@ class CurrencyInfoDAOImpl @Inject()(protected val provider: DbProvider, table: C
   val driver = provider.getDriver()
   val db = provider.getDb()
 
+  import driver.api._
+
   private val currencyInfos = table.getCurrencyInfos
 
-  def all(): Future[Seq[CurrencyInfo]] = db.run(currencyInfos.result)
-
-  def insert(currencyInfo: CurrencyInfo): Future[Int] = db.run(currencyInfos += currencyInfo)
-
+  def insert(currencyInfo: CurrencyInfo): Future[Long] = db.run((currencyInfos returning currencyInfos.map(_.timestamp)) += currencyInfo)
 }
 

@@ -90,7 +90,8 @@ lazy val scheduler = (project in file("scheduler"))
       dependencies.scalatest,
       dependencies.akkaActor,
       dependencies.akkaStream,
-      dependencies.slick
+      dependencies.slick,
+      dependencies.slickHikaricp
     )
   )
   .aggregate(model, util)

@@ -2,46 +2,27 @@ package bao.ho.service.woker
 
 import java.util.Date
 
-import bao.ho.models.Currency
-import bao.ho.service.crawler.CurrencyCrawlerService
-import javax.inject.Inject
+import org.slf4j.LoggerFactory
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
+import scala.concurrent.ExecutionContext.Implicits.global
 
+trait Worker {
+  def importHistoricData(currency: String, from: Date, to: Date): Future[Seq[Future[Long]]]
+}
 
-class Worker @Inject()(crawler: CurrencyCrawlerService)(implicit executionContext: ExecutionContext) //, currencyDao: CurrencyDAO, currencyInfoDAO: CurrencyInfoDAO)
-  extends WorkerService {
-  def importHistoricData(currency: String, from: Date, to: Date): Future[String] = {
-    for {
-      currInfos <- crawler.crawlCurrencyData(currency, from, to)
-      currInfo <- currInfos
-      currOpt <- Future {
-        Some(Currency(1, "bitcoin", "btc", "crypto"))
-      }
-    } println(currInfo.copy(currInfo.timestamp, currOpt.get.id, currInfo.marketCapByAvailableSupply, currInfo.priceUsd, currInfo.volume))
-    //    val currencyInfos: Future[Seq[CurrencyInfo]] = for {
-    //      currInfos <- crawler.crawlCurrencyData(currency, from, to)
-    //      currInfo <- currInfos
-    //      currOpt <- Future {
-    //        Some(Currency(1, "bitcoin", "btc", "crypto"))
-    //      }
-    //      curr <- currOpt
-    //    } yield )
-    //    currencyInfos onComplete {
-    //      case Success(lines) => lines.foreach(println)
-    //      case Failure(f) => println(f)
-    //    }
+object Worker{
 
-    Future("")
+  val logger = LoggerFactory.getLogger(this.getClass)
 
+  def stop[T](f: Future[T]): Unit = {
+    f.onComplete({
+      case Success(_) =>
+        System.exit(1)
+      case Failure(f) =>
+        logger.error(s"Failure :: $f")
+        System.exit(1)
+    })
   }
-
-  //      data
-
-  //    val data = for {
-  //      currInfos <- crawlingService.crawlCurrencyData(currency, from, to)
-  //      currInfo <- currInfos
-  //          currencyDao.findByCurrency(currency)
-  //      currId <- currIdOpt
-  //    } yield currencyInfoDAO.insert(CurrencyInfo())
 }

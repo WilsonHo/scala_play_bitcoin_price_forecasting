@@ -1,20 +1,18 @@
-import bao.ho.configuration.{Global, Injector}
-import bao.ho.service.woker.WorkerService
+import bao.ho.configuration.Injector
+import bao.ho.service.woker.Worker
 import converting.DateUtils
+import org.slf4j.LoggerFactory
 
 
-object Main extends Global with Injector {
+object Main extends Injector {
+  val logger = LoggerFactory.getLogger(this.getClass)
 
   def main(args: Array[String]): Unit = {
-    //    val myConfiguration: MyConfiguration = injector.getInstance(classOf[MyConfiguration])
-
-    //    println(myConfiguration.config.get[String]("demo"))
-    val worker = injector.getInstance(classOf[WorkerService])
-
-    val from = DateUtils.convertStringToDate("2018-01-01 00:00:00+0000")
-    val to = DateUtils.convertStringToDate("2018-01-01 00:30:00+0000")
-    worker.importHistoricData("bitcoin", from, to)
-
+    val worker = injector.getInstance(classOf[Worker])
+    val from = DateUtils.convertStringToDate("2015-01-01 00:00:00+0000")
+    val to = DateUtils.convertStringToDate("2018-08-17 00:30:00+0000")
+    val f = worker.importHistoricData("bitcoin", from, to)
+    Worker.stop(f)
   }
 }
 
