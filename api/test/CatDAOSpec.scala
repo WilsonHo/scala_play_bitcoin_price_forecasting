@@ -1,10 +1,10 @@
+import bao.ho.models.Currency
+
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
-
 import dao.CurrencyDAO
-import models.Currency
 import play.api.Application
 
 /** test the kitty cat database */

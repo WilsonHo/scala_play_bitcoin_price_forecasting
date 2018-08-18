@@ -26,9 +26,8 @@ lazy val model = (project in file("model"))
     version := "0.1",
     libraryDependencies ++= Seq(
       dependencies.playJson,
-      dependencies.guice,
-      dependencies.playSlick,
-      dependencies.playSlickEvolutions
+      dependencies.slick,
+      dependencies.guice
     )
   )
 
@@ -40,13 +39,13 @@ lazy val api = (project in file("api"))
     resolvers += Resolver.sonatypeRepo("snapshots"),
     resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     libraryDependencies ++= Seq(
-      guice,
       ws,
       cacheApi,
+      guice,
+      dependencies.scalaGuice,
       dependencies.postgres,
       dependencies.playJson,
-      dependencies.playSlick,
-      dependencies.playSlickEvolutions,
+      dependencies.slickHikaricp,
       dependencies.akkaActor,
       dependencies.akkaStream,
       "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
@@ -74,8 +73,6 @@ lazy val spark = (project in file("spark"))
   .aggregate(model)
   .dependsOn(model)
 
-//resolvers += "Artima Maven Repository" at "http://repo.artima.com/releases"
-
 lazy val scheduler = (project in file("scheduler"))
   .settings(
     commonSettings,
@@ -92,7 +89,8 @@ lazy val scheduler = (project in file("scheduler"))
       dependencies.playJson,
       dependencies.scalatest,
       dependencies.akkaActor,
-      dependencies.akkaStream
+      dependencies.akkaStream,
+      dependencies.slick
     )
   )
   .aggregate(model, util)
@@ -114,12 +112,14 @@ lazy val dependencyVersion =
     val postgresV = "42.0.0"
     val playJsonV = "2.6.9"
     val guiceV = "4.2.0"
-    val playSlickV = "3.0.1"
+    val playSlickV = "3.0.3"
     val scalatestV = "3.0.4"
     val akkaV = "2.5.14"
     val scalaLoggingV = "3.9.0"
     val scalaLoggingSlf4jV = "2.1.2"
     val scalaLoggingApiV = "2.1.2"
+    val slickV = "3.2.3"
+    val scalaGuiceV = "4.2.1"
   }
 
 lazy val dependencies =
@@ -140,6 +140,9 @@ lazy val dependencies =
     val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % dependencyVersion.scalaLoggingV
     val scalaLoggingSlf4j = "com.typesafe.scala-logging" % "scala-logging-slf4j_2.11" % dependencyVersion.scalaLoggingSlf4jV
     val scalaLoggingApi = "com.typesafe.scala-logging" % "scala-logging-api_2.11" % dependencyVersion.scalaLoggingApiV
+    val slick = "com.typesafe.slick" %% "slick" % dependencyVersion.slickV
+    val slickHikaricp = "com.typesafe.slick" %% "slick-hikaricp" % dependencyVersion.slickV
+    val scalaGuice = "net.codingwell" %% "scala-guice" % dependencyVersion.scalaGuiceV
 
     //    val typesafeConfig = "com.typesafe"               % "config"                   % typesafeConfigV
     //    val monocleCore    = "com.github.julien-truffaut" %% "monocle-core"            % monocleV

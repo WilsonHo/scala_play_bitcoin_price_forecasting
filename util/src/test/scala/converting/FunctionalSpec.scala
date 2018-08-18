@@ -1,23 +1,22 @@
-import javax.inject.Inject
-import org.scalatest._
-import com.google.inject.Guice
-import com.google.inject.{AbstractModule}
-import net.codingwell.scalaguice.{ScalaModule}
-
+package converting
 
 /**
   * Functional tests start a Play application internally, available
   * as `app`.
   */
-class FunctionalSpec extends FunSuite with Matchers with
-  OptionValues with Inside with Inspectors {
+class FunctionalSpec extends PlaySpec with GuiceOneAppPerSuite {
 
-  test("Date String to Date--------------") {
-    class MyModule extends AbstractModule with ScalaModule {
-      override def configure(): Unit = {
-        bind[String].toInstance("foo")
-        bind[GuiceSpec.type].toInstance(GuiceSpec)
+
+  def instanceBindingExample {
+    // if you want to bind to a specific instance of a class...
+    class InstanceExampleModule extends AbstractModule {
+      @Override
+      override protected def configure() {
+        bind(classOf[String]).toInstance("foo")
       }
+
+      @Provides
+      def guiceSpecProvider: GuiceSpec.type = GuiceSpec
     }
 
     object GuiceSpec {
@@ -26,14 +25,14 @@ class FunctionalSpec extends FunSuite with Matchers with
 
       def get() = s
     }
-    val injector = Guice.createInjector(new MyModule())
 
-    val demo = injector.getInstance(classOf[String])
-    println(demo)
-    println(s"GuiceSpec.s---------------------------- = ${GuiceSpec.get}")
+    val injector = Guice.createInjector(new InstanceExampleModule)
+    println(s"GuiceSpec.s = ${GuiceSpec.s}")
     //    val service = injector.getInstance(classOf[AService])
-    assert("2" === "1")
+    //    assertEquals("instance1", service.service)
   }
+
+
   //  "Guice" must {
   //    "inject into Scala objects" in {
   //      val injector = Guice.createInjector(new ScalaModule() {

@@ -1,5 +1,5 @@
 <!-- https://www.playframework.com/documentation/latest/SettingsLogger -->
-<configuration>
+<bao.ho.configuration>
 
   <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
 
@@ -27,7 +27,7 @@
   <logger name="play" level="INFO" />
   <logger name="application" level="DEBUG" />
 
-  <!-- Off these ones as they are annoying, and anyway we manage configuration ourselves -->
+  <!-- Off these ones as they are annoying, and anyway we manage bao.ho.configuration ourselves -->
   <logger name="com.avaje.ebean.config.PropertyMapLoader" level="OFF" />
   <logger name="com.avaje.ebeaninternal.server.core.XmlConfigLoader" level="OFF" />
   <logger name="com.avaje.ebeaninternal.server.lib.BackgroundThread" level="OFF" />
@@ -38,4 +38,4 @@
     <appender-ref ref="ASYNCSTDOUT" />
   </root>
 
-</configuration>
+</bao.ho.configuration>

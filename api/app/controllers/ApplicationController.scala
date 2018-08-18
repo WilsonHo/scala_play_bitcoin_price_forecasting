@@ -1,9 +1,9 @@
 package controllers
 
+import bao.ho.models.Currency
 import dao.CurrencyDAO
 import io.swagger.annotations.{Api, ApiParam, ApiResponse, ApiResponses}
 import javax.inject.Inject
-import models.Currency
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.Forms.text

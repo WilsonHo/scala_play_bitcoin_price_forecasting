@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ScalaCompilerConfiguration">
-    <profile name="sbt 1" modules="scala_play_bitcoin_price_forecasting_3138,play,spark,root,model,util,scheduler" />
+    <profile name="sbt 1" modules="scala_play_bitcoin_price_forecasting_3138,play,model,util,scheduler,root,spark" />
     <profile name="sbt 2" modules="api">
       <option name="deprecationWarnings" value="true" />
       <option name="uncheckedWarnings" value="true" />
