@@ -1,8 +1,6 @@
 
 
 
-
-
 GET        /                                          controllers.ApplicationController.index
 GET        /api/v1/prices/:currency/:from/:to/        controllers.ApplicationController.getPrice(currency:String, from:Long,to:Long)
 GET        /api/v1/price_forecasting/:currency        controllers.ApplicationController.predictPrice(currency:String)

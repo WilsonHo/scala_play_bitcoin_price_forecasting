@@ -14,11 +14,11 @@ services:
        - ./data/postgres:/data/postgres
     ports:
       - "5432:5432"
-    networks:
-      - bao.ho
-
-
-networks:
-  bao.ho:
-    external:
-      name: bao.ho.network
+#    networks:
+#      - bao.ho
+#
+#
+#networks:
+#  bao.ho:
+#    external:
+#      name: bao.ho.network

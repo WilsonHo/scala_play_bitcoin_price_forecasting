@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory
 
 
 object Main extends Injector {
-//  val logger = LoggerFactory.getLogger(this.getClass)
 
   def main(args: Array[String]): Unit = {
     val worker = injector.getInstance(classOf[Worker])

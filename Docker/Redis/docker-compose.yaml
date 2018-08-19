@@ -12,11 +12,11 @@ services:
        - ./data/redis:/data
     ports:
       - "6379:6379"
-    networks:
-      - bao.ho
-
-
-networks:
-  bao.ho:
-    external:
-      name: bao.ho.network
+#    networks:
+#      - bao.ho
+#
+#
+#networks:
+#  bao.ho:
+#    external:
+#      name: bao.ho.network

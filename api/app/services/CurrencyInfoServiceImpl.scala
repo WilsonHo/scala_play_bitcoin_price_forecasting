@@ -11,6 +11,7 @@ class CurrencyInfoServiceImpl @Inject()(currencyDao: CurrencyDAO,
                                         currencyInfoDAO: CurrencyInfoDAO) extends CurrencyInfoService(currencyInfoDAO) {
   override def getPrice(currency: String, from: Long, to: Long): Future[Seq[CurrencyInfo]] = {
 
+    //TODO: This place need to get currency from currency name
     currencyInfoDAO.getPrice(1, from, to)
   }
 }
