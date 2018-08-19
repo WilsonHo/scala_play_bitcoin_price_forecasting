@@ -1,39 +1,82 @@
-object Main {
-  def main(args: Array[String]): Unit = {
-    val conf = new SparkConf()
-      .setAppName("LogisticRegressionWithLBFGSExample")
-    val sc = new SparkContext(conf)
+import scala.language.reflectiveCalls
+import org.apache.log4j.{Level, Logger}
+import org.apache.spark.examples.mllib.AbstractParams
+import scopt.OptionParser
+import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.mllib.classification.NaiveBayes
+import org.apache.spark.mllib.util.MLUtils
 
-    // $example on$
-    // Load training data in LIBSVM format.
-    val data = MLUtils.loadLibSVMFile(sc, "data/mllib/sample_libsvm_data.txt")
+/**
+  * An example naive Bayes app. Run with
+  * {{{
+  * ./bin/run-example org.apache.spark.examples.mllib.SparseNaiveBayes [options] <input>
+  * }}}
+  * If you use it as a template to create your own app, please use `spark-submit` to submit your app.
+  */
+object SparseNaiveBayes {
 
-    // Split data into training (60%) and test (40%).
-    val splits = data.randomSplit(Array(0.6, 0.4), seed = 11L)
-    val training = splits(0).cache()
-    val test = splits(1)
+  case class Params(
+                     input: String = null,
+                     minPartitions: Int = 0,
+                     numFeatures: Int = -1,
+                     lambda: Double = 1.0) extends AbstractParams[Params]
 
-    // Run training algorithm to build the model
-    val model = new LogisticRegressionWithLBFGS()
-      .setNumClasses(10)
-      .run(training)
+  def main(args: Array[String]) {
+    val defaultParams = Params()
 
-    // Compute raw scores on the test set.
-    val predictionAndLabels = test.map { case LabeledPoint(label, features) =>
-      val prediction = model.predict(features)
-      (prediction, label)
+    val parser = new OptionParser[Params]("SparseNaiveBayes") {
+      head("SparseNaiveBayes: an example naive Bayes app for LIBSVM data.")
+      opt[Int]("numPartitions")
+        .text("min number of partitions")
+        .action((x, c) => c.copy(minPartitions = x))
+      opt[Int]("numFeatures")
+        .text("number of features")
+        .action((x, c) => c.copy(numFeatures = x))
+      opt[Double]("lambda")
+        .text(s"lambda (smoothing constant), default: ${defaultParams.lambda}")
+        .action((x, c) => c.copy(lambda = x))
+      arg[String]("<input>")
+        .text("input paths to labeled examples in LIBSVM format")
+        .required()
+        .action((x, c) => c.copy(input = x))
     }
 
-    // Get evaluation metrics.
-    val metrics = new MulticlassMetrics(predictionAndLabels)
-    val accuracy = metrics.accuracy
-    println(s"Accuracy = $accuracy")
+    parser.parse(args, defaultParams) match {
+      case Some(params) => run(params)
+      case _ => sys.exit(1)
+    }
+  }
 
-    // Save and load model
-    model.save(sc, "target/tmp/scalaLogisticRegressionWithLBFGSModel")
-    val sameModel = LogisticRegressionModel.load(sc,
-      "target/tmp/scalaLogisticRegressionWithLBFGSModel")
-    // $example off$
+  def run(params: Params): Unit = {
+    val conf = new SparkConf().setAppName(s"SparseNaiveBayes with $params")
+    val sc = new SparkContext(conf)
+
+    Logger.getRootLogger.setLevel(Level.WARN)
+
+    val minPartitions =
+      if (params.minPartitions > 0) params.minPartitions else sc.defaultMinPartitions
+
+    val examples =
+      MLUtils.loadLibSVMFile(sc, params.input, params.numFeatures, minPartitions)
+    // Cache examples because it will be used in both training and evaluation.
+    examples.cache()
+
+    val splits = examples.randomSplit(Array(0.8, 0.2))
+    val training = splits(0)
+    val test = splits(1)
+
+    val numTraining = training.count()
+    val numTest = test.count()
+
+    println(s"numTraining = $numTraining, numTest = $numTest.")
+
+    val model = new NaiveBayes().setLambda(params.lambda).run(training)
+
+    val prediction = model.predict(test.map(_.features))
+    val predictionAndLabel = prediction.zip(test.map(_.label))
+    val accuracy = predictionAndLabel.filter(x => x._1 == x._2).count().toDouble / numTest
+
+    println(s"Test accuracy = $accuracy.")
 
     sc.stop()
   }

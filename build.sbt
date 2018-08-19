@@ -1,8 +1,10 @@
+
 lazy val commonSettings = Seq(
   organization := "bao.ho",
-  scalaVersion := "2.12.6",
-  scalacOptions := Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-Xlint"),
-  fork := true
+  scalaVersion := "2.11.12",
+  javaOptions in Test += "-Djava.library.path=./lib",
+  javaOptions in runMain += "-Djava.library.path=./lib",
+  javaOptions in Compile += "-Djava.library.path=./lib"
 )
 
 lazy val util = (project in file("util"))
@@ -15,7 +17,10 @@ lazy val util = (project in file("util"))
       dependencies.scalactic,
       dependencies.scalaLogging,
       dependencies.scalaLoggingSlf4j,
-      dependencies.scalaLoggingApi
+      dependencies.scalaLoggingApi,
+      dependencies.jacksonCore,
+      dependencies.jacksonDatabind,
+      dependencies.jacksonModuleScala
     )
   )
 
@@ -27,7 +32,10 @@ lazy val model = (project in file("model"))
     libraryDependencies ++= Seq(
       dependencies.playJson,
       dependencies.slick,
-      dependencies.guice
+      dependencies.guice,
+      dependencies.jacksonCore,
+      dependencies.jacksonDatabind,
+      dependencies.jacksonModuleScala
     )
   )
 
@@ -48,10 +56,14 @@ lazy val api = (project in file("api"))
       dependencies.slickHikaricp,
       dependencies.akkaActor,
       dependencies.akkaStream,
-      "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
-      "com.typesafe.play" %% "play-cache" % "2.6.17",
-      "com.github.karelcemus" %% "play-redis" % "2.1.1",
-      "io.swagger" %% "swagger-play2" % "1.6.0"
+      dependencies.scalatestplusPlay,
+      dependencies.playCache,
+      dependencies.playRedis,
+      //      dependencies.swaggerPlay2,
+      dependencies.jacksonCore,
+      dependencies.jacksonDatabind,
+      dependencies.jacksonModuleScala,
+      dependencies.jep
     )
   )
   .aggregate(model, util)
@@ -66,14 +78,15 @@ lazy val spark = (project in file("spark"))
     version := "0.1",
     libraryDependencies ++= Seq(
       dependencies.postgres,
-      dependencies.playJson,
       dependencies.scalatest,
       dependencies.sparkCore,
-      dependencies.sparkStreaming,
+      dependencies.sparkMllib,
       dependencies.sparkSql,
-      dependencies.sparkHive,
-      dependencies.sparkRepl,
-      dependencies.sparkMllib
+      dependencies.jacksonCore,
+      dependencies.jacksonDatabind,
+      dependencies.jacksonModuleScala,
+      dependencies.scopt,
+      dependencies.guava
     )
   )
   .aggregate(model, util)
@@ -97,7 +110,10 @@ lazy val scheduler = (project in file("scheduler"))
       dependencies.akkaActor,
       dependencies.akkaStream,
       dependencies.slick,
-      dependencies.slickHikaricp
+      dependencies.slickHikaricp,
+      dependencies.jacksonCore,
+      dependencies.jacksonDatabind,
+      dependencies.jacksonModuleScala
     )
   )
   .aggregate(model, util)
@@ -128,11 +144,23 @@ lazy val dependencyVersion =
     val slickV = "3.2.3"
     val scalaGuiceV = "4.2.1"
     val sparkV = "2.3.1"
+    val jacksonModuleScalaV = "2.8.7"
+    val scalatestplusPlayV = "3.1.2"
+    val playCacheV = "2.6.17"
+    val playRedisV = "2.1.1"
+    val swaggerPlay2V = "1.6.0"
+    val scoptV = "3.3.0"
+    val guavaV = "15.0"
+    val jepV = "3.8.2"
   }
 
 lazy val dependencies =
   new {
     val scalatest = "org.scalatest" %% "scalatest" % dependencyVersion.scalatestV % "test"
+    val scalatestplusPlay = "org.scalatestplus.play" %% "scalatestplus-play" % dependencyVersion.scalatestplusPlayV % Test
+    val playCache = "com.typesafe.play" %% "play-cache" % dependencyVersion.playCacheV
+    val playRedis = "com.github.karelcemus" %% "play-redis" % dependencyVersion.playRedisV
+    val swaggerPlay2 = "io.swagger" %% "swagger-play2" % dependencyVersion.swaggerPlay2V
     val scalactic = "org.scalactic" %% "scalactic" % dependencyVersion.scalatestV
     val postgres = "org.postgresql" % "postgresql" % dependencyVersion.postgresV
     val playAhcWsStandalone = "com.typesafe.play" %% "play-ahc-ws-standalone" % dependencyVersion.playWsStandaloneV
@@ -152,9 +180,12 @@ lazy val dependencies =
     val slickHikaricp = "com.typesafe.slick" %% "slick-hikaricp" % dependencyVersion.slickV
     val scalaGuice = "net.codingwell" %% "scala-guice" % dependencyVersion.scalaGuiceV
     val sparkCore = "org.apache.spark" % "spark-core_2.11" % dependencyVersion.sparkV
-    val sparkStreaming = "org.apache.spark" % "spark-streaming_2.11" % dependencyVersion.sparkV
     val sparkSql = "org.apache.spark" % "spark-sql_2.11" % dependencyVersion.sparkV
-    val sparkHive = "org.apache.spark" % "spark-hive_2.11" % dependencyVersion.sparkV
-    val sparkRepl = "org.apache.spark" % "spark-repl_2.11" % dependencyVersion.sparkV
-    val sparkMllib = "org.apache.spark" % "spark-mllib_2.11" % "2.3.1" % dependencyVersion.sparkV
+    val sparkMllib = "org.apache.spark" % "spark-mllib_2.11" % dependencyVersion.sparkV
+    val jacksonCore = "com.fasterxml.jackson.core" % "jackson-core" % dependencyVersion.jacksonModuleScalaV
+    val jacksonDatabind = "com.fasterxml.jackson.core" % "jackson-databind" % dependencyVersion.jacksonModuleScalaV
+    val jacksonModuleScala = "com.fasterxml.jackson.module" %% "jackson-module-scala" % dependencyVersion.jacksonModuleScalaV
+    val scopt = "com.github.scopt" %% "scopt" % dependencyVersion.scoptV
+    val guava = "com.google.guava" % "guava" % dependencyVersion.guavaV
+    val jep = "black.ninia" % "jep" % dependencyVersion.jepV
   }

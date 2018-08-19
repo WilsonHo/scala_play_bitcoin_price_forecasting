@@ -1,5 +1,5 @@
 package bao.ho
 
-class SparkJoinsScalaTest extends UnitSpec {
+class SparkJoinsScalaTest {
 
 }
