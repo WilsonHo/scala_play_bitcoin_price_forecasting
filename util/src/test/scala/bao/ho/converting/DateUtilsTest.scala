@@ -1,9 +1,9 @@
-package converting
+package bao.ho.converting
 
 import java.util.Date
 import java.util.Calendar
 
-class DateUtilsTest extends UnitSpec {
+class DateUtilsTest extends BaseSpec {
   //  val LOG = Logger(LoggerFactory.getLogger(this.getClass))
 
   test("Date String to Date") {

@@ -3,7 +3,7 @@ package bao.ho.service.crawler
 import java.util.Date
 
 import bao.ho.models.CurrencyInfo
-import converting.DateUtils
+import bao.ho.converting.DateUtils
 import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSClient, WSResponse}

@@ -1,8 +1,8 @@
-
-//TODO: Refactor this file
 lazy val commonSettings = Seq(
   organization := "bao.ho",
-  scalaVersion := "2.12.6"
+  scalaVersion := "2.12.6",
+  scalacOptions := Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-Xlint"),
+  fork := true
 )
 
 lazy val util = (project in file("util"))
@@ -54,8 +54,8 @@ lazy val api = (project in file("api"))
       "io.swagger" %% "swagger-play2" % "1.6.0"
     )
   )
-  .aggregate(model)
-  .dependsOn(model)
+  .aggregate(model, util)
+  .dependsOn(model, util)
   .enablePlugins(PlayScala)
 
 
@@ -67,11 +67,17 @@ lazy val spark = (project in file("spark"))
     libraryDependencies ++= Seq(
       dependencies.postgres,
       dependencies.playJson,
-      dependencies.scalatest
+      dependencies.scalatest,
+      dependencies.sparkCore,
+      dependencies.sparkStreaming,
+      dependencies.sparkSql,
+      dependencies.sparkHive,
+      dependencies.sparkRepl,
+      dependencies.sparkMllib
     )
   )
-  .aggregate(model)
-  .dependsOn(model)
+  .aggregate(model, util)
+  .dependsOn(model, util)
 
 lazy val scheduler = (project in file("scheduler"))
   .settings(
@@ -121,6 +127,7 @@ lazy val dependencyVersion =
     val scalaLoggingApiV = "2.1.2"
     val slickV = "3.2.3"
     val scalaGuiceV = "4.2.1"
+    val sparkV = "2.3.1"
   }
 
 lazy val dependencies =
@@ -144,11 +151,10 @@ lazy val dependencies =
     val slick = "com.typesafe.slick" %% "slick" % dependencyVersion.slickV
     val slickHikaricp = "com.typesafe.slick" %% "slick-hikaricp" % dependencyVersion.slickV
     val scalaGuice = "net.codingwell" %% "scala-guice" % dependencyVersion.scalaGuiceV
-
-    //    val typesafeConfig = "com.typesafe"               % "config"                   % typesafeConfigV
-    //    val monocleCore    = "com.github.julien-truffaut" %% "monocle-core"            % monocleV
-    //    val monocleMacro   = "com.github.julien-truffaut" %% "monocle-macro"           % monocleV
-    //    val pureconfig     = "com.github.pureconfig"      %% "pureconfig"              % pureconfigV
-    //    val scalatest      = "org.scalatest"              %% "scalatest"               % scalatestV
-    //    val scalacheck     = "org.scalacheck"             %% "scalacheck"              % scalacheckV
+    val sparkCore = "org.apache.spark" % "spark-core_2.11" % dependencyVersion.sparkV
+    val sparkStreaming = "org.apache.spark" % "spark-streaming_2.11" % dependencyVersion.sparkV
+    val sparkSql = "org.apache.spark" % "spark-sql_2.11" % dependencyVersion.sparkV
+    val sparkHive = "org.apache.spark" % "spark-hive_2.11" % dependencyVersion.sparkV
+    val sparkRepl = "org.apache.spark" % "spark-repl_2.11" % dependencyVersion.sparkV
+    val sparkMllib = "org.apache.spark" % "spark-mllib_2.11" % "2.3.1" % dependencyVersion.sparkV
   }

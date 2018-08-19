@@ -1,11 +1,11 @@
 import bao.ho.configuration.Injector
 import bao.ho.service.woker.Worker
-import converting.DateUtils
+import bao.ho.converting.DateUtils
 import org.slf4j.LoggerFactory
 
 
 object Main extends Injector {
-  val logger = LoggerFactory.getLogger(this.getClass)
+//  val logger = LoggerFactory.getLogger(this.getClass)
 
   def main(args: Array[String]): Unit = {
     val worker = injector.getInstance(classOf[Worker])

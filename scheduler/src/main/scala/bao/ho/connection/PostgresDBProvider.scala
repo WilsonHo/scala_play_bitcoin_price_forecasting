@@ -5,7 +5,7 @@ import slick.jdbc.{JdbcProfile, PostgresProfile}
 
 
 class PostgresDBProvider() extends DbProvider {
-  val LOG = LoggerFactory.getLogger(this.getClass)
+//  val LOG = LoggerFactory.getLogger(this.getClass)
 
   val driver = PostgresProfile
 

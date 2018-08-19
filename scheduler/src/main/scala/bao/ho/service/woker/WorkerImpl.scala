@@ -9,13 +9,12 @@ import javax.inject.Inject
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 
 class WorkerImpl @Inject()(crawler: CurrencyCrawler, currencyDao: CurrencyDAO, currencyInfoDAO: CurrencyInfoDAO)
                           (implicit executionContext: ExecutionContext)
   extends Worker {
-  val logger = LoggerFactory.getLogger(this.getClass)
+//  val logger = LoggerFactory.getLogger(this.getClass)
 
   def importHistoricData(currency: String, from: Date, to: Date): Future[Seq[Future[Long]]] = {
     val currencyF: Future[Option[Currency]] = currencyDao.findByCurrency(currency)
