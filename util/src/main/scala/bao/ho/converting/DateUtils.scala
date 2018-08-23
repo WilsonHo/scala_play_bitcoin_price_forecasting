@@ -2,7 +2,6 @@ package bao.ho.converting
 
 import java.text.SimpleDateFormat
 import java.util.Date
-//import java.time.Instant
 
 object DateUtils {
   val formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ssZ")
@@ -33,4 +32,9 @@ object DateUtils {
     formatter.parse(date)
   }
 
+  def getDateAsString(date: Date): String = {
+    val DATE_FORMAT = "yyyy-MM-dd"
+    val dateFormat = new SimpleDateFormat(DATE_FORMAT)
+    dateFormat.format(date)
+  }
 }

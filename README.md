@@ -43,3 +43,16 @@ $ sbt api/run
 
 In the ./spark/src/main/python directory I have 2 price forecasting files,
 I get them from kaggle, I can run them to predict the bitcoin price.
+
+pip install jep
+pip install pandas
+pip install numpy
+pip install tensorflow
+pip install keras
+pip install sklearn
+pip install html5lib
+pip install bs4
+
+
+sbt "-Djava.library.path=./lib" api/run
+sbt "-Dhttp.port=8100 -Djava.library.path=./lib -jvm-debug 9999" api/run

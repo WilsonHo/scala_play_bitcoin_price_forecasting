@@ -1,11 +1,39 @@
-
 lazy val commonSettings = Seq(
   organization := "bao.ho",
-  scalaVersion := "2.11.12",
-  javaOptions in Test += "-Djava.library.path=./lib",
-  javaOptions in runMain += "-Djava.library.path=./lib",
-  javaOptions in Compile += "-Djava.library.path=./lib"
+  scalaVersion := "2.11.12"
 )
+
+lazy val root = (project in file("."))
+  .settings(
+    commonSettings,
+    name := "scala_play_bitcoin_price_forecasting",
+    version := "0.1",
+    resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases",
+    resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/",
+    javaOptions += "-Djava.library.path=./lib",
+
+    libraryDependencies ++= Seq(jdbc,
+      ehcache,
+      ws,
+      specs2 % Test,
+      guice,
+      dependencies.scalaGuice,
+      dependencies.postgres,
+      dependencies.playJson,
+      dependencies.slickHikaricp,
+      dependencies.akkaActor,
+      dependencies.akkaStream,
+      dependencies.scalatestplusPlay,
+      dependencies.playCache,
+      dependencies.playRedis,
+      dependencies.jacksonCore,
+      dependencies.jacksonDatabind,
+      dependencies.jacksonModuleScala,
+      dependencies.jep
+    )
+  )
+  .dependsOn(model, util)
+  .enablePlugins(PlayScala)
 
 lazy val util = (project in file("util"))
   .settings(
@@ -39,58 +67,6 @@ lazy val model = (project in file("model"))
     )
   )
 
-lazy val api = (project in file("api"))
-  .settings(
-    commonSettings,
-    name := "api",
-    version := "0.1",
-    resolvers += Resolver.sonatypeRepo("snapshots"),
-    resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
-    libraryDependencies ++= Seq(
-      ws,
-      cacheApi,
-      guice,
-      dependencies.scalaGuice,
-      dependencies.postgres,
-      dependencies.playJson,
-      dependencies.slickHikaricp,
-      dependencies.akkaActor,
-      dependencies.akkaStream,
-      dependencies.scalatestplusPlay,
-      dependencies.playCache,
-      dependencies.playRedis,
-      //      dependencies.swaggerPlay2,
-      dependencies.jacksonCore,
-      dependencies.jacksonDatabind,
-      dependencies.jacksonModuleScala,
-      dependencies.jep
-    )
-  )
-  .aggregate(model, util)
-  .dependsOn(model, util)
-  .enablePlugins(PlayScala)
-
-
-lazy val spark = (project in file("spark"))
-  .settings(
-    commonSettings,
-    name := "spark",
-    version := "0.1",
-    libraryDependencies ++= Seq(
-      dependencies.postgres,
-      dependencies.scalatest,
-      dependencies.sparkCore,
-      dependencies.sparkMllib,
-      dependencies.sparkSql,
-      dependencies.jacksonCore,
-      dependencies.jacksonDatabind,
-      dependencies.jacksonModuleScala,
-      dependencies.scopt,
-      dependencies.guava
-    )
-  )
-  .aggregate(model, util)
-  .dependsOn(model, util)
 
 lazy val scheduler = (project in file("scheduler"))
   .settings(
@@ -116,18 +92,7 @@ lazy val scheduler = (project in file("scheduler"))
       dependencies.jacksonModuleScala
     )
   )
-  .aggregate(model, util)
   .dependsOn(model, util)
-
-
-lazy val root = (project in file("."))
-  .settings(
-    commonSettings,
-    name := "scala_play_bitcoin_price_forecasting",
-    version := "0.1"
-  )
-  .aggregate(api, spark, util, scheduler, model)
-  .dependsOn(api, spark, util, scheduler, model)
 
 lazy val dependencyVersion =
   new {
@@ -189,3 +154,10 @@ lazy val dependencies =
     val guava = "com.google.guava" % "guava" % dependencyVersion.guavaV
     val jep = "black.ninia" % "jep" % dependencyVersion.jepV
   }
+
+
+
+
+
+
+
