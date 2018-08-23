@@ -18,30 +18,23 @@ class PredictionController @Inject()(config: Configuration,
     */
   def predictPrice(currency: String) = Action.async {
     var jep: Jep = null
-    var ans: String = null
-    try {
-      val jep = new Jep(new JepConfig().addSharedModules("numpy"))
-      jep.runScript(config
-        .getOptional[String]("python")
-        .getOrElse("./python/currency_price_prediction.py")
-      )
-      val f = Array[Float](1.0f, 2.1f, 3.3f, 4.5f, 5.6f, 6.7f)
-      val nd = new NDArray[Array[Float]](f, 3, 2)
-      jep.set("last15DaysPrice", nd)
-      val query = s"""price = predict_price(last15DaysPrice, currency="${currency}")"""
-      jep.eval(query)
-      val ans: String = jep.getValue("price").asInstanceOf[String]
-    }
-    catch {
-      case _: Throwable => println("Got some other kind of exception")
-    }
-    finally {
-      jep.close()
-    }
+    val jep = new Jep(new JepConfig().addSharedModules("numpy"))
+    jep.runScript(config
+      .getOptional[String]("python")
+      .getOrElse("./python/currency_price_prediction.py")
+    )
+
+    val fn = "predict_price"
+    val f = Array[Float](1.0f, 2.1f, 3.3f, 4.5f, 5.6f, 6.7f)
+    val nd = new NDArray[Array[Float]](f)
+    val r1 = jep.invoke(fn, nd,currency)
+    println(s"config = ${r1}")
+
+//    val ans: String = jep.getValue("r1").asInstanceOf[String]
+    jep.close()
 
     Future {
       Ok(ans)
     }
   }
-
 }

@@ -52,7 +52,7 @@ pip install keras
 pip install sklearn
 pip install html5lib
 pip install bs4
-
+pip install psycopg2
 
 sbt "-Djava.library.path=./lib" api/run
 sbt "-Dhttp.port=8100 -Djava.library.path=./lib -jvm-debug 9999" api/run
